@@ -39,6 +39,7 @@ public class KafkaWriterConfigurationKeys {
    * by the PREFIX specified below.
    */
   public static final String KAFKA_PRODUCER_CONFIG_PREFIX = "writer.kafka.producerConfig.";
+  public static final String KAFKA_CONSUMER_CONFIG_PREFIX = "reader.kafka.consumerConfig.";
 
   /** Kafka producer scoped configuration keys go here **/
   static final String KEY_SERIALIZER_CONFIG = "key.serializer";

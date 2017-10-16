@@ -28,6 +28,7 @@ import com.typesafe.config.ConfigFactory;
 
 import lombok.extern.slf4j.Slf4j;
 
+import org.apache.gobblin.kafka.KafkaHelper;
 import org.apache.gobblin.util.ConfigUtils;
 
 import static org.apache.gobblin.kafka.writer.KafkaWriterConfigurationKeys.*;
@@ -42,35 +43,16 @@ public class KafkaWriterHelper {
 
   static Properties getProducerProperties(Properties props)
   {
-    Properties producerProperties = stripPrefix(props, KAFKA_PRODUCER_CONFIG_PREFIX);
+    Properties producerProperties = KafkaHelper.stripPrefix(props, KAFKA_PRODUCER_CONFIG_PREFIX);
 
     // Provide default properties if not set from above
-    setDefaultIfUnset(producerProperties, KEY_SERIALIZER_CONFIG, DEFAULT_KEY_SERIALIZER);
-    setDefaultIfUnset(producerProperties, VALUE_SERIALIZER_CONFIG, DEFAULT_VALUE_SERIALIZER);
-    setDefaultIfUnset(producerProperties, CLIENT_ID_CONFIG, CLIENT_ID_DEFAULT);
-    setDefaultIfUnset(producerProperties, KAFKA_SCHEMA_REGISTRY_SWITCH_NAME, KAFKA_SCHEMA_REGISTRY_SWITCH_NAME_DEFAULT);
+    KafkaHelper.setPropertyIfUnset(producerProperties, KEY_SERIALIZER_CONFIG, DEFAULT_KEY_SERIALIZER);
+    KafkaHelper.setPropertyIfUnset(producerProperties, VALUE_SERIALIZER_CONFIG, DEFAULT_VALUE_SERIALIZER);
+    KafkaHelper.setPropertyIfUnset(producerProperties, CLIENT_ID_CONFIG, CLIENT_ID_DEFAULT);
+    KafkaHelper.setPropertyIfUnset(producerProperties, KAFKA_SCHEMA_REGISTRY_SWITCH_NAME, KAFKA_SCHEMA_REGISTRY_SWITCH_NAME_DEFAULT);
     return producerProperties;
   }
 
-  private static void setDefaultIfUnset(Properties props, String key, String value)
-  {
-    if (!props.containsKey(key)) {
-      props.setProperty(key, value);
-    }
-  }
-
-  private static Properties stripPrefix(Properties props, String prefix) {
-    Properties strippedProps = new Properties();
-    int prefixLength = prefix.length();
-    for (String key: props.stringPropertyNames())
-    {
-      if (key.startsWith(prefix))
-      {
-        strippedProps.setProperty(key.substring(prefixLength), props.getProperty(key));
-      }
-    }
-    return strippedProps;
-  }
 
   public static Object getKafkaProducer(Properties props)
   {
